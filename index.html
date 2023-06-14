@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSYP Home</title>
+</head>
+<body>
+    <!-- Reporting Date Selector-->
+    <label for="reporting-date">Please Select a Reporting Date</label>
+    <input type="date" id="reporting-date" name="reporting-date"/>
+
+    <!-- Daily Commentary -->
+    <div id="daily-commentary" style="height: 300px; width: 600px">
+        <div id="ffa-market"></div>
+        <div id="ffa-cape"></div>
+    </div>
+
+    <!-- Route Price Tables-->
+    <div id="route-info-table-container">
+        <table id="route-info-table">
+            <tr>
+                <th>Route</th>
+                <th>Rate</th>
+                <th>Change</th>
+                <th>Commentary</th>
+            </tr>
+        </table>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
