@@ -1,5 +1,6 @@
 const token = "TapaHBWxr3seBwRY";
 let reportingDate;
+let originalFormatReportingDate;
 let commentaryUR;
 let routePriceUrl;
 
@@ -18,6 +19,7 @@ const reportingDateInput = document.getElementById("reporting-date");
 reportingDateInput.addEventListener("change", async (event) => {
     let commentaryURL = "https://www.ssyreports.com/api/ExampleEodCommentary/{token}/{reportingDate}";
     reportingDate = event.target.value;
+    originalFormatReportingDate = reportingDate;
     reportingDate = dateFormater(reportingDate);
     console.log(reportingDate);
     commentaryURL = commentaryURL.replace("{token}", token).replace("{reportingDate}", reportingDate);
@@ -60,14 +62,85 @@ function addCommentary(commentaryFFAMarket, commentaryFFACape){
 }
 
 async function handleRouteTableInfo(){
-    let routePriceUrl = "https://www.ssyreports.com/api/ExampleEodPrices/{token}/{routeCode}/{reportingDate}";
+    const tablesContainer = document.getElementById('route-info-table-container');
+    tablesContainer.innerHTML = '';
+
     for(let routeCode in veeselRoutes){
-        routePriceUrl = routePriceUrl.replace("{token}", token).replace("{routeCode}",routeCode).replace("{reportingDate}", reportingDate);
+        let isAPIDataAvailable = false;
+        let routePriceUrl = "https://www.ssyreports.com/api/ExampleEodPrices/{token}/{routeCode}/{reportingDate}";
+        const tempTable = document.createElement('table');
+        tempTable.setAttribute('id', 'route-'+routeCode);
+        tempTable.setAttribute('class', 'route-table');
+        tempTable.setAttribute('border', '1');
+
+
+        // Create table caption
+        const caption = document.createElement('caption');
+        caption.textContent =  routeCode + 'Route Price Information Table';
+        tempTable.appendChild(caption);
+
+        const tRow = document.createElement('tr');
+        tempTable.appendChild(tRow);
+
+        const tHead1 = document.createElement('th');
+        tHead1.innerHTML = 'Period Code';
+
+        const tHead2 = document.createElement('th');
+        tHead2.innerHTML = 'End-of-day price';
+        
+        const tHead3 = document.createElement('th');
+        tHead3.innerHTML = 'Day-on-day movements';
+
+        tRow.appendChild(tHead1);
+        tRow.appendChild(tHead2);
+        tRow.appendChild(tHead3);
+
+        tempTable.appendChild(tRow);
+
+        routePriceUrl = routePriceUrl.replace("{token}", token)
+        .replace("{routeCode}",routeCode)
+        .replace("{reportingDate}", reportingDate);
+
         const routePriceinfo = await fetchData(routePriceUrl);
         
         console.log(routePriceinfo);
         if(routePriceinfo.length > 0){
-            for(Object )
+            isAPIDataAvailable = true;
+            routePriceinfo.forEach((routePriceDetails) => {
+                const periodCode = routePriceDetails.periodCode;
+                const price = routePriceDetails.price;
+                const doD = routePriceDetails.doD;
+
+                console.log('ROUTE CODE', routeCode, ' PERIOD CODE', periodCode, ' PRICE', price, ' DOD', doD);
+
+                if(!periodCode || !price || !doD){
+                    const tRow = document.createElement('tr');
+        
+                const periodCodeCell = document.createElement('td');
+                periodCodeCell.innerHTML = periodCode;
+        
+                const priceCell = document.createElement('td');
+                priceCell.innerHTML = price;
+                
+                const dOdCodeCell = document.createElement('td');
+                dOdCodeCell.innerHTML = doD;
+        
+                tRow.appendChild(periodCodeCell);
+                tRow.appendChild(priceCell);
+                tRow.appendChild(dOdCodeCell);
+                
+                tempTable.appendChild(tRow);
+                }
+                
+            });
         }
+        
+        const routeTablesContainer = document.getElementById('route-info-table-container');
+        if(isAPIDataAvailable){
+            routeTablesContainer.appendChild(tempTable);
+        }else{
+            routeTablesContainer.innerHTML += '<h6>No data available for Route ' + routeCode + ' on ' + originalFormatReportingDate + '</h6>';
+        }
+        
     }
 }

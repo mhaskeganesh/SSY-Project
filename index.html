@@ -5,6 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SSYP Home</title>
+    <style>
+        .route-table {
+            /*display: inline-block;*/
+            border: 1px solid black;
+            margin: 20px;
+        }
+        #route-info-table-container{
+            /*display: flex;
+            flex-wrap: wrap;*/
+            justify-content: center;
+        }
+    </style>
 </head>
 <body>
     <!-- Reporting Date Selector-->
@@ -12,22 +24,13 @@
     <input type="date" id="reporting-date" name="reporting-date"/>
 
     <!-- Daily Commentary -->
-    <div id="daily-commentary" style="height: 300px; width: 600px">
+    <div id="daily-commentary">
         <div id="ffa-market"></div>
         <div id="ffa-cape"></div>
     </div>
 
     <!-- Route Price Tables-->
-    <div id="route-info-table-container">
-        <table id="route-info-table">
-            <tr>
-                <th>Route</th>
-                <th>Rate</th>
-                <th>Change</th>
-                <th>Commentary</th>
-            </tr>
-        </table>
-    </div>
+    <div id="route-info-table-container"></div>
     <script src="index.js"></script>
 </body>
 </html>
