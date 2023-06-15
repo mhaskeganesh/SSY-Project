@@ -4,7 +4,7 @@ let originalFormatReportingDate;
 let commentaryUR;
 let routePriceUrl;
 
-
+// Object storing the vessel routes and their corresponding codes
 const veeselRoutes = {
     'CP1': 'Hampton Roads / Rotterdam',
     'CP2': 'Tubarao / Rotterdam',
@@ -19,16 +19,14 @@ const reportingDateInput = document.getElementById("reporting-date");
 reportingDateInput.addEventListener("change", async (event) => {
     document.getElementById('main-content').style.display = 'block';
     let commentaryURL = "https://www.ssyreports.com/api/ExampleEodCommentary/{token}/{reportingDate}";
+
     reportingDate = event.target.value;
     originalFormatReportingDate = reportingDate;
     reportingDate = dateFormater(reportingDate);
-    // console.log(reportingDate);
     commentaryURL = commentaryURL.replace("{token}", token).replace("{reportingDate}", reportingDate);
-    // console.log('URL', commentaryURL);
 
     // Adding commentary
     const commentary = await fetchData(commentaryURL);
-    // console.log(commentary);
     const commentaryFFAMarket = commentary[0].comment;
     const commentaryFFACape = commentary[1].comment;
     addCommentary(commentaryFFAMarket, commentaryFFACape);
@@ -40,23 +38,37 @@ reportingDateInput.addEventListener("change", async (event) => {
     handleChartDisplay();
 });
 
+/**
+ * This function fetches data from the specified API endpoint.
+ * @param {string} requestQuery - The API request URL.
+ * @returns {Promise} - A promise that resolves to the fetched data or rejects with an error.
+ */
 async function fetchData(requestQuery) {
     try{
-    const response = await fetch(requestQuery)
-    const data = await response.json();
-    return data;
+        const response = await fetch(requestQuery)
+        const data = await response.json();
+        return data;
     }catch(error){
         console.log(error);
     }    
-    // console.log('Inside fetchData');
 }
 
+/**
+ * Formats the date to remove dashes.
+ * @param {string} date - The input date in "YYYY-MM-DD" format.
+ * @returns {string} - The formatted date without dashes "YYYYMMDD".
+ */
 function dateFormater(date){
     const parts =  date.split("-");
     const formattedDate = parts.join("");
     return formattedDate;
 }
 
+/**
+ * Adds the fetched commentary to the corresponding HTML elements.
+ * @param {string} commentaryFFAMarket - The fetched FFA market commentary.
+ * @param {string} commentaryFFACape - The fetched FFA Cape commentary.
+ */
 function addCommentary(commentaryFFAMarket, commentaryFFACape){
     const fMarketDiv = document.getElementById("ffa-market");
     fMarketDiv.innerHTML = commentaryFFAMarket;
@@ -65,6 +77,9 @@ function addCommentary(commentaryFFAMarket, commentaryFFACape){
     fCapeDiv.innerHTML = commentaryFFACape;
 }
 
+/**
+ * Handles the creation of route information tables for each vessel route.
+ */
 async function handleRouteTableInfo(){
     const tablesContainer = document.getElementById('route-info-table-container');
     tablesContainer.innerHTML = '';
@@ -107,15 +122,12 @@ async function handleRouteTableInfo(){
 
         const routePriceinfo = await fetchData(routePriceUrl);
         
-        // console.log(routePriceinfo);
         if(routePriceinfo.length > 0){
             isAPIDataAvailable = true;
             routePriceinfo.forEach((routePriceDetails) => {
                 const periodCode = routePriceDetails.periodCode;
                 const price = routePriceDetails.price;
                 const doD = routePriceDetails.doD;
-
-                // console.log('ROUTE CODE', routeCode, ' PERIOD CODE', periodCode, ' PRICE', price, ' DOD', doD);
 
                 if(periodCode || price || doD){
                     const tRow = document.createElement('tr');
@@ -127,7 +139,6 @@ async function handleRouteTableInfo(){
                 priceCell.innerHTML = price;
                 
                 const dOdCodeCell = document.createElement('td');
-                // console.log('doD', doD);
                 dOdCodeCell.innerHTML = doD;
         
                 tRow.appendChild(periodCodeCell);
@@ -146,10 +157,12 @@ async function handleRouteTableInfo(){
         }else{
             routeTablesContainer.innerHTML += '<h6 class="text-muted">No Price data available for Route ' + routeCode + ' on ' + originalFormatReportingDate + '</h6>';
         }
-        
     }
 }
 
+/**
+ * Handles the display of the Highcharts chart showing the Cape Index prices over the past year.
+ */
 async function handleChartDisplay(){
     const chartContainer = document.getElementById('capeindex-price-chart-container');
     const capeIndexPriceRequestUrl = "https://www.ssyreports.com/api/ExampleEodCapeIndex/{token}/{reportingDate}";
@@ -160,7 +173,6 @@ async function handleChartDisplay(){
         capeIndexPriceData.forEach((capeIndexPriceDetails) => {
             capeIndexPriceDataArray.push([new Date(capeIndexPriceDetails.priceDate).getTime(), capeIndexPriceDetails.price]);
         });
-        console.log('CAPE INDEX PRICE INFO', capeIndexPriceData.length);
 
         Highcharts.chart(chartContainer, {
             title: {
