@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSYP Home</title>
+    <title>SSY Dry FFA Freight Summary - Market Analysis & Prices</title>
+
+    <!--HighChart.js CDN import-->
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+
     <style>
         .route-table {
             /*display: inline-block;*/
@@ -17,20 +25,32 @@
             justify-content: center;
         }
     </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1 id="headline">SSY Dry FFA freight summary</h1>
     <!-- Reporting Date Selector-->
-    <label for="reporting-date">Please Select a Reporting Date</label>
-    <input type="date" id="reporting-date" name="reporting-date"/>
-
-    <!-- Daily Commentary -->
-    <div id="daily-commentary">
-        <div id="ffa-market"></div>
-        <div id="ffa-cape"></div>
+    <div id="date-picker-container">
+        <label for="reporting-date">Please Select a Reporting Date</label>
+        <input type="date" id="reporting-date" name="reporting-date"/>
     </div>
+    
+    <div id="main-content">
+        <!-- Daily Commentary -->
+        <div id="daily-commentary">
+            <div id="ffa-market"></div>
+            <div id="ffa-cape"></div>
+        </div>
 
-    <!-- Route Price Tables-->
-    <div id="route-info-table-container"></div>
+        <!-- Route Price Tables-->
+        <div id="route-info-table-container"></div>
+
+        <!-- Route Price Charts-->
+        <div id="capeindex-price-chart-container"></div>
+
+        <!--JavaSceipt Controller connection-->
+    </div>
+    
     <script src="index.js"></script>
 </body>
 </html>

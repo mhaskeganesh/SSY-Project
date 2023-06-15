@@ -21,19 +21,22 @@ reportingDateInput.addEventListener("change", async (event) => {
     reportingDate = event.target.value;
     originalFormatReportingDate = reportingDate;
     reportingDate = dateFormater(reportingDate);
-    console.log(reportingDate);
+    // console.log(reportingDate);
     commentaryURL = commentaryURL.replace("{token}", token).replace("{reportingDate}", reportingDate);
-    console.log('URL', commentaryURL);
+    // console.log('URL', commentaryURL);
 
     // Adding commentary
     const commentary = await fetchData(commentaryURL);
-    console.log(commentary);
+    // console.log(commentary);
     const commentaryFFAMarket = commentary[0].comment;
     const commentaryFFACape = commentary[1].comment;
     addCommentary(commentaryFFAMarket, commentaryFFACape);
 
     // Adding CPA tables
     handleRouteTableInfo();
+
+    //Adding CapeIndex-Price chart
+    handleChartDisplay();
 });
 
 async function fetchData(requestQuery) {
@@ -44,7 +47,7 @@ async function fetchData(requestQuery) {
     }catch(error){
         console.log(error);
     }    
-    console.log('Inside fetchData');
+    // console.log('Inside fetchData');
 }
 
 function dateFormater(date){
@@ -76,7 +79,7 @@ async function handleRouteTableInfo(){
 
         // Create table caption
         const caption = document.createElement('caption');
-        caption.textContent =  routeCode + 'Route Price Information Table';
+        caption.textContent =  routeCode +' '+ veeselRoutes[routeCode]+' Route Price Information Table';
         tempTable.appendChild(caption);
 
         const tRow = document.createElement('tr');
@@ -103,7 +106,7 @@ async function handleRouteTableInfo(){
 
         const routePriceinfo = await fetchData(routePriceUrl);
         
-        console.log(routePriceinfo);
+        // console.log(routePriceinfo);
         if(routePriceinfo.length > 0){
             isAPIDataAvailable = true;
             routePriceinfo.forEach((routePriceDetails) => {
@@ -111,9 +114,9 @@ async function handleRouteTableInfo(){
                 const price = routePriceDetails.price;
                 const doD = routePriceDetails.doD;
 
-                console.log('ROUTE CODE', routeCode, ' PERIOD CODE', periodCode, ' PRICE', price, ' DOD', doD);
+                // console.log('ROUTE CODE', routeCode, ' PERIOD CODE', periodCode, ' PRICE', price, ' DOD', doD);
 
-                if(!periodCode || !price || !doD){
+                if(periodCode || price || doD){
                     const tRow = document.createElement('tr');
         
                 const periodCodeCell = document.createElement('td');
@@ -123,6 +126,7 @@ async function handleRouteTableInfo(){
                 priceCell.innerHTML = price;
                 
                 const dOdCodeCell = document.createElement('td');
+                // console.log('doD', doD);
                 dOdCodeCell.innerHTML = doD;
         
                 tRow.appendChild(periodCodeCell);
@@ -143,4 +147,40 @@ async function handleRouteTableInfo(){
         }
         
     }
+}
+
+async function handleChartDisplay(){
+    const chartContainer = document.getElementById('capeindex-price-chart-container');
+    const capeIndexPriceRequestUrl = "https://www.ssyreports.com/api/ExampleEodCapeIndex/{token}/{reportingDate}";
+    const capeIndexPriceData = await fetchData(capeIndexPriceRequestUrl.replace("{token}", token).replace("{reportingDate}", reportingDate));
+
+    if(capeIndexPriceData.length > 0){
+        let capeIndexPriceDataArray = [];
+
+        capeIndexPriceData.forEach((capeIndexPriceDetails) => {
+            capeIndexPriceDataArray.push([capeIndexPriceDetails.priceDate, capeIndexPriceDetails.price]);
+        });
+        console.log('CAPE INDEX PRICE INFO', capeIndexPriceData.length);
+
+        Highcharts.stockChart(chartContainer, {
+            rangeSelector: {
+            selected: 1
+            },        
+            title: {
+            text: 'Cape Index Price Chart'
+            },        
+            series: [{
+            name: 'Cape Index Price',
+            data: capeIndexPriceDataArray,
+            type: 'spline',
+            tooltip: {
+                valueDecimals: 2
+            }
+            }]
+        });
+
+    }else{
+        chartContainer.innerHTML = '<h6>No data available for Cape Index Price on ' + originalFormatReportingDate + '</h6>';
+    }
+    
 }
