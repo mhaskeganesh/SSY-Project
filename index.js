@@ -17,6 +17,7 @@ const veeselRoutes = {
 // Adding event listener to the reporting date input
 const reportingDateInput = document.getElementById("reporting-date");
 reportingDateInput.addEventListener("change", async (event) => {
+    document.getElementById('main-content').style.display = 'block';
     let commentaryURL = "https://www.ssyreports.com/api/ExampleEodCommentary/{token}/{reportingDate}";
     reportingDate = event.target.value;
     originalFormatReportingDate = reportingDate;
@@ -73,7 +74,7 @@ async function handleRouteTableInfo(){
         let routePriceUrl = "https://www.ssyreports.com/api/ExampleEodPrices/{token}/{routeCode}/{reportingDate}";
         const tempTable = document.createElement('table');
         tempTable.setAttribute('id', 'route-'+routeCode);
-        tempTable.setAttribute('class', 'route-table');
+        tempTable.setAttribute('class', 'table route-table caption-top table-hover');
         tempTable.setAttribute('border', '1');
 
 
@@ -143,7 +144,7 @@ async function handleRouteTableInfo(){
         if(isAPIDataAvailable){
             routeTablesContainer.appendChild(tempTable);
         }else{
-            routeTablesContainer.innerHTML += '<h6>No data available for Route ' + routeCode + ' on ' + originalFormatReportingDate + '</h6>';
+            routeTablesContainer.innerHTML += '<h6 class="text-muted">No Price data available for Route ' + routeCode + ' on ' + originalFormatReportingDate + '</h6>';
         }
         
     }
@@ -156,31 +157,38 @@ async function handleChartDisplay(){
 
     if(capeIndexPriceData.length > 0){
         let capeIndexPriceDataArray = [];
-
         capeIndexPriceData.forEach((capeIndexPriceDetails) => {
-            capeIndexPriceDataArray.push([capeIndexPriceDetails.priceDate, capeIndexPriceDetails.price]);
+            capeIndexPriceDataArray.push([new Date(capeIndexPriceDetails.priceDate).getTime(), capeIndexPriceDetails.price]);
         });
         console.log('CAPE INDEX PRICE INFO', capeIndexPriceData.length);
 
-        Highcharts.stockChart(chartContainer, {
-            rangeSelector: {
-            selected: 1
-            },        
+        Highcharts.chart(chartContainer, {
             title: {
-            text: 'Cape Index Price Chart'
-            },        
+              text: 'Cape Index Price Chart'
+            },
+            xAxis: {
+                title: {
+                    text: 'Date'
+                  },
+                type: 'datetime'
+            },
+            yAxis: {
+              title: {
+                text: 'Price'
+              }
+            },
             series: [{
-            name: 'Cape Index Price',
-            data: capeIndexPriceDataArray,
-            type: 'spline',
-            tooltip: {
-                valueDecimals: 2
-            }
+              name: 'Cape Index Price',
+              data: capeIndexPriceDataArray,
+              type: 'line',
+              marker: {
+                enabled: false
+              }
             }]
-        });
-
+          });
+          
     }else{
-        chartContainer.innerHTML = '<h6>No data available for Cape Index Price on ' + originalFormatReportingDate + '</h6>';
+        chartContainer.innerHTML = '<h6>No Price data available for Cape Index Price on ' + originalFormatReportingDate + '</h6>';
     }
     
 }
