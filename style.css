@@ -1,22 +1,26 @@
 /* Reset and Global Styles */
+/* Apply box-sizing and reset margin and padding for all elements */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* Body Styles */
 body {
   font-family: 'Montserrat', sans-serif;
   background-color: #f6f9fc;
   color: #333333;
 }
 
+/* Container Styles */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
 
+/* Headline Styles */
 h1,
 #headline {
   font-size: 40px;
@@ -27,7 +31,7 @@ h1,
   text-transform: uppercase;
 }
 
-/* Reporting Date Selector */
+/* Reporting Date Selector Styles */
 #date-picker-container {
   width: 100%;
   max-width: 300px;
@@ -40,7 +44,7 @@ h1,
   text-align: center;
 }
 
-/* Daily Commentary section */
+/* Daily Commentary Section Styles */
 #daily-commentary div {
   background-color: #ffffff;
   border: 1px solid #ccc;
@@ -49,7 +53,7 @@ h1,
   margin-bottom: 20px;
 }
 
-/* Route Price Tables */
+/* Route Price Tables Styles */
 .route-table {
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -78,18 +82,19 @@ h1,
   background-color: #ffffff;
 }
 
-/* CapeIndex-Price Chart */
+/* CapeIndex-Price Chart Styles */
 #capeindex-price-chart-container {
   margin-bottom: 30px;
   height: 400px;
 }
 
-/* Error message */
+/* Error Message Styles */
 .error-message {
   color: red;
   font-weight: bold;
 }
 
+/* Additional Styles */
 #headline {
   text-align: center;
   color: #007BFF;
@@ -110,7 +115,7 @@ tr:hover {
   background-color: #ffff99;
 }
 
-/* Responsive design for smaller screens */
+/* Responsive Design for Smaller Screens */
 @media only screen and (max-width: 768px) {
   .container {
     padding: 20px 10px;
@@ -136,6 +141,7 @@ tr:hover {
   }
 }
 
-#main-content{
+/* Main Content Styles */
+#main-content {
   display: none;
 }
